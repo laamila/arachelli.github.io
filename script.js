@@ -239,3 +239,22 @@ function animateConfetti() {
 applyConfig();
 updateCountdown();
 setInterval(updateCountdown, 1000);
+
+document.addEventListener("DOMContentLoaded", function () {
+  const openButton = document.getElementById("openInvitationBtn");
+  const music = document.getElementById("bgMusic");
+
+  if (!openButton || !music) return;
+
+  openButton.addEventListener("click", function () {
+    music.volume = 0.35;
+
+    const playPromise = music.play();
+
+    if (playPromise) {
+      playPromise.catch(function (error) {
+        console.log("Musik belum dapat diputar:", error);
+      });
+    }
+  });
+});
