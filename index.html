@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff0f5">
+  <title>Birthday Invitation | You're Invited</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <section class="cover" id="cover">
+    <div class="cover-frame">
+      <p class="eyebrow">A LITTLE PARTY, A LOT OF LOVE</p>
+      <div class="bow">୨୧</div>
+      <p class="script">You're invited to celebrate</p>
+
+      <h1>Birthday<br><em>Celebration</em></h1>
+
+      <div class="cake" aria-hidden="true">
+        <div class="candle">✦</div>
+        <div class="cake-top"></div>
+        <div class="cake-middle"></div>
+        <div class="cake-bottom"></div>
+        <div class="plate"></div>
+      </div>
+
+      <p class="muted">A special day for someone special ♡</p>
+
+      <button class="btn" id="openInvitation">
+        Buka Undangan <span>♡</span>
+      </button>
+
+      <p class="tiny">Scroll, smile, and celebrate with us</p>
+    </div>
+
+    <span class="sparkle s1">✧</span>
+    <span class="sparkle s2">✦</span>
+    <span class="sparkle s3">♡</span>
+  </section>
+
+  <main id="invitation" hidden>
+
+    <nav class="navbar">
+      <a class="brand" href="#home">Birthday <span>♡</span></a>
+      <div>
+        <a href="#details">Acara</a>
+        <a href="#gallery">Galeri</a>
+        <a href="#rsvp">RSVP</a>
+      </div>
+    </nav>
+
+    <section class="hero section" id="home">
+      <p class="eyebrow">SAVE THE DATE</p>
+      <p class="script">Let's make a wish for</p>
+
+      <h2 id="birthdayName">Your Name</h2>
+      <p class="muted">A new chapter, another beautiful year</p>
+
+      <div class="hero-photo-wrap">
+        <img
+          id="heroPhoto"
+          src="https://images.unsplash.com/photo-1530103862676-de8c9de136e2?auto=format&fit=crop&w=900&q=85"
+          alt="Dekorasi pesta ulang tahun pastel">
+        <span class="sticker sticker-left">with love ♡</span>
+        <span class="sticker sticker-right">make a wish!</span>
+      </div>
+
+      <p class="quote">
+        “May your day be filled with little moments<br>
+        that turn into lovely memories.”
+      </p>
+
+      <a href="#details" class="scroll-link">DISCOVER THE DETAILS ↓</a>
+    </section>
+
+    <section class="section details" id="details">
+      <p class="eyebrow">THE CELEBRATION</p>
+      <h2 class="section-title">A day to <em>remember</em></h2>
+
+      <p class="intro">
+        Dengan penuh kebahagiaan, kami mengundangmu untuk
+        merayakan hari istimewa ini bersama.
+      </p>
+
+      <div class="detail-card">
+        <div class="heart">♡</div>
+        <p class="label">THE DATE</p>
+        <h3 id="eventDateText">Sabtu, 21 November 2026</h3>
+        <p id="eventTimeText">15.00 WIB – selesai</p>
+
+        <hr>
+
+        <p class="label">THE PLACE</p>
+        <h3 id="eventLocation">Our Lovely Place</h3>
+        <p id="eventAddress">Alamat acara akan diperbarui.</p>
+
+        <a id="mapLink" href="https://maps.google.com"
+           target="_blank" rel="noopener">Lihat lokasi ↗</a>
+      </div>
+
+      <div class="countdown-wrap">
+        <p class="eyebrow">COUNTING EVERY MOMENT</p>
+
+        <div class="countdown">
+          <div><strong id="days">00</strong><span>Hari</span></div>
+          <div><strong id="hours">00</strong><span>Jam</span></div>
+          <div><strong id="minutes">00</strong><span>Menit</span></div>
+          <div><strong id="seconds">00</strong><span>Detik</span></div>
+        </div>
+
+        <p id="countdownMessage" class="muted">
+          Can't wait to celebrate with you!
+        </p>
+      </div>
+    </section>
+
+    <section class="section gallery" id="gallery">
+      <p class="eyebrow">LITTLE MOMENTS, BIG MEMORIES</p>
+      <h2 class="section-title">A little <em>photo diary</em></h2>
+
+      <p class="intro">
+        Beberapa momen manis untuk dikenang.
+        Ganti foto berikut dengan foto pemilik acara.
+      </p>
+
+      <div class="gallery-grid">
+        <figure class="photo-card tall">
+          <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=85"
+               alt="Kue ulang tahun" loading="lazy">
+          <figcaption>sweetest moments ♡</figcaption>
+        </figure>
+
+        <figure class="photo-card">
+          <img src="https://images.unsplash.com/photo-1530103862676-de8c9de136e2?auto=format&fit=crop&w=800&q=85"
+               alt="Balon pesta" loading="lazy">
+          <figcaption>little celebrations</figcaption>
+        </figure>
+
+        <figure class="photo-card">
+          <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=85"
+               alt="Suasana perayaan" loading="lazy">
+          <figcaption>made with love</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section wishes">
+      <div class="wish-card">
+        <div class="flower">✿</div>
+        <p class="eyebrow">A LITTLE WISH FOR YOU</p>
+
+        <h2 class="section-title">
+          Make a wish,<br><em>blow the candles.</em>
+        </h2>
+
+        <p class="intro">
+          Semoga tahun yang baru membawa lebih banyak tawa,
+          cinta, kesehatan, dan hal-hal baik yang tak terduga.
+        </p>
+
+        <p class="script">With love, ♡</p>
+      </div>
+    </section>
+
+    <section class="section gift" id="gift">
+      <p class="eyebrow">YOUR PRESENCE IS THE BEST PRESENT</p>
+      <h2 class="section-title">Send a little <em>love</em></h2>
+
+      <p class="intro">
+        Kehadiran dan doa baikmu adalah hadiah paling berharga.
+        Jika berkenan, kamu juga bisa mengirimkan hadiah di bawah ini.
+      </p>
+
+      <div class="gift-card">
+        <div class="gift-icon">🎁</div>
+        <h3>Birthday Gift</h3>
+        <p id="giftDescription">
+          Informasi hadiah dari pemilik acara.
+        </p>
+
+        <div class="gift-details">
+          Nama penerima: <strong id="giftRecipient">Nama Penerima</strong><br>
+          Bank/e-wallet: <strong id="giftBank">Nama Bank</strong><br>
+          Nomor: <strong id="giftNumber">0000000000</strong>
+        </div>
+
+        <button class="btn btn-outline" id="copyGift">
+          Salin Nomor Hadiah
+        </button>
+        <p id="copyStatus" class="muted"></p>
+      </div>
+    </section>
+
+    <section class="section rsvp" id="rsvp">
+      <p class="eyebrow">LET US KNOW</p>
+      <h2 class="section-title">Will you <em>join us?</em></h2>
+
+      <p class="intro">
+        Konfirmasi kehadiran dan tuliskan doa terbaikmu.
+      </p>
+
+      <form id="rsvpForm">
+        <label for="guestName">Nama kamu</label>
+        <input id="guestName" type="text"
+               placeholder="Tulis nama lengkap" required>
+
+        <label for="attendance">Konfirmasi kehadiran</label>
+        <select id="attendance" required>
+          <option value="">Pilih jawaban</option>
+          <option value="Hadir">Dengan senang hati, aku hadir!</option>
+          <option value="Tidak hadir">Maaf, belum bisa hadir</option>
+          <option value="Belum pasti">Masih belum pasti</option>
+        </select>
+
+        <label for="guestCount">Jumlah orang</label>
+        <select id="guestCount">
+          <option value="1">1 orang</option>
+          <option value="2">2 orang</option>
+          <option value="3">3 orang</option>
+          <option value="4">4 orang</option>
+          <option value="5">5 orang</option>
+        </select>
+
+        <label for="guestWish">Ucapan dan doa</label>
+        <textarea id="guestWish" rows="4"
+                  placeholder="Tuliskan ucapan manis di sini..."></textarea>
+
+        <button type="submit" class="btn btn-wide">
+          Kirim via WhatsApp ↗
+        </button>
+
+        <p class="form-note">
+          WhatsApp akan terbuka dengan pesan yang sudah disiapkan.
+          Tekan tombol kirim untuk mengirimkannya.
+        </p>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <div class="heart">♡</div>
+      <p class="script">Thank you for being part of the story</p>
+      <h2 id="footerName">Your Name's Birthday</h2>
+      <p class="muted">Made with love & a little sparkle ✦</p>
+
+      <button class="music-btn" id="musicToggle">
+        ♫ <span id="musicLabel">Putar musik</span>
+      </button>
+
+      <audio id="birthdayMusic" loop preload="none">
+        <source src="assets/birthday-music.mp3" type="audio/mpeg">
+      </audio>
+
+      <p class="copyright">DIGITAL INVITATION TEMPLATE</p>
+    </footer>
+  </main>
+
+  <canvas id="confettiCanvas"></canvas>
+  <script src="script.js"></script>
+</body>
+</html>
