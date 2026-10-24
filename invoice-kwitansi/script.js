@@ -39,6 +39,18 @@ function num(id) {
   return Math.max(0, Number($(id).value) || 0);
 }
 
+function autoCalculateDiscount() {
+  const subtotal = getItems().reduce(
+    (sum, item) => sum + item.qty * item.price,
+    0
+  );
+
+  const percent = Math.min(100, num("discountPercent"));
+  const discountAmount = Math.round(subtotal * percent / 100);
+
+  $("discountAmount").value = discountAmount;
+}
+
 function dateText(value) {
   if (!value) return "-";
   return new Date(value + "T00:00:00").toLocaleDateString("id-ID", {
@@ -91,9 +103,9 @@ function addItem(name = "", qty = 1, price = 0) {
     saveDraft(false);
   });
 
-  $("itemsList").appendChild(row);
+   $("itemsList").appendChild(row);
+  autoCalculateDiscount();
   renderPreview();
-}
 
 function getItems() {
   return [...$("itemsList").querySelectorAll(".item-row")].map(row => ({
@@ -419,13 +431,24 @@ document.querySelectorAll(".tab").forEach(tab => {
 
 $("addItem").addEventListener("click", () => {
   addItem();
-  saveDraft(false);
-});
-
-$("docForm").addEventListener("input", () => {
+  autoCalculateDiscount();
   renderPreview();
   saveDraft(false);
 });
+
+$("docForm").addEventListener("input", (event) => {
+  if (
+    event.target.id === "discountPercent" ||
+    event.target.classList.contains("item-qty") ||
+    event.target.classList.contains("item-price")
+  ) {
+    autoCalculateDiscount();
+  }
+
+  renderPreview();
+  saveDraft(false);
+});
+
 
 $("saveLocal").addEventListener("click", () => saveDraft(true));
 $("resetForm").addEventListener("click", resetForm);
