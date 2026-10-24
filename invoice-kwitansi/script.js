@@ -536,13 +536,15 @@
  }
 
  // Inisialisasi pertama kali
- if (!loadDraft()) {
-   $("docDate").value = todayISO();
-   $("dueDate").value = todayISO();
-   $("docNumber").value = "INV-" + String(Date.now()).slice(-6);
+if (!loadDraft()) {
+  $("docDate").value = todayISO();
+  $("dueDate").value = todayISO();
+  $("docNumber").value = "INV-" + String(Date.now()).slice(-6);
+}
 
-   addItem();
- }
+if (!$("itemsList").querySelector(".item-row")) {
+  addItem();
+}
 
- autoCalculateDiscount();
- renderPreview();
+autoCalculateDiscount();
+renderPreview();
