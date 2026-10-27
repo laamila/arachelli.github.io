@@ -3,7 +3,7 @@
  // VELORA DOCS — GENERATOR INVOICE & KWITANSI
  // ================================================
 
- const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhV3umA1dzQW9Pi2p5NeB5SsVHP6E_J_kypeZQUHT9Jc-_nemo7Zn-maBIzTWyujSY/exec";
+ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_QjI34EwgTHvDCfrhdxipIxg3zKp19Ab_H7HYUWcyVh9Y62qKBlFjoQwabBmXKu8/exec";
  const SHEETS_TOKEN = "020101";
 
  const $ = (id) => document.getElementById(id);
