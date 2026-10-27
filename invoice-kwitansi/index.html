@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -32,7 +33,10 @@
     <div class="workspace">
       <section class="editor-panel">
         <div class="panel-heading">
-          <div><p class="eyebrow">FORMULIR</p><h2 id="formTitle">Detail Invoice</h2></div>
+          <div>
+            <p class="eyebrow">FORMULIR</p>
+            <h2 id="formTitle">Detail Invoice</h2>
+          </div>
           <span class="saved-indicator" id="savedIndicator">Draft tersimpan otomatis</span>
         </div>
 
@@ -43,7 +47,13 @@
               <label>Nomor dokumen<input id="docNumber" placeholder="INV-001" required></label>
               <label>Tanggal<input id="docDate" type="date" required></label>
               <label id="dueDateWrap">Jatuh tempo<input id="dueDate" type="date"></label>
-              <label>Status pembayaran<select id="paymentStatus"><option>Belum Dibayar</option><option>DP / Sebagian</option><option>Lunas</option></select></label>
+              <label>Status pembayaran
+                <select id="paymentStatus">
+                  <option>Belum Dibayar</option>
+                  <option>DP / Sebagian</option>
+                  <option>Lunas</option>
+                </select>
+              </label>
             </div>
           </div>
 
@@ -67,58 +77,137 @@
           </div>
 
           <div class="form-section" id="itemsSection">
-            <div class="section-title-row"><h3>Barang / jasa</h3><button type="button" class="btn btn-small btn-outline" id="addItem">+ Tambah item</button></div>
-            <div class="items-head"><span>Nama item</span><span>Qty</span><span>Harga satuan</span><span>Total</span><span></span></div>
+            <div class="section-title-row">
+              <h3>Barang / jasa</h3>
+              <button type="button" class="btn btn-small btn-outline" id="addItem">+ Tambah item</button>
+            </div>
+            <div class="items-head">
+              <span>Nama item</span>
+              <span>Qty</span>
+              <span>Harga satuan</span>
+              <span>Total</span>
+              <span></span>
+            </div>
             <div id="itemsList"></div>
           </div>
 
           <div class="form-section" id="totalsSection">
             <h3>Penyesuaian harga</h3>
             <div class="field-grid">
-              <label>Diskon (%)<input id="discountPercent" type="number" min="0" max="100" value="0"></label>
-              <label>Diskon nominal (Rp)<input id="discountAmount" type="number" min="0" value="0"></label>
-              <label>Pajak (%)<input id="taxPercent" type="number" min="0" max="100" value="0"></label>
-              <label>Jumlah dibayar (Rp)<input id="paidAmount" type="number" min="0" value="0"></label>
+              <label>Diskon (%)
+                <input id="discountPercent" type="number" min="0" max="100" value="0">
+              </label>
+
+              <label>Diskon nominal (Rp)
+                <input id="discountAmount" type="text" inputmode="numeric" value="0">
+              </label>
+
+              <label>Pajak (%)
+                <input id="taxPercent" type="number" min="0" max="100" value="0">
+              </label>
+
+              <label>Nominal pajak (Rp)
+                <input id="taxAmount" type="text" inputmode="numeric" value="0" readonly>
+              </label>
+
+              <label>Jumlah dibayar (Rp)
+                <input id="paidAmount" type="text" inputmode="numeric" value="0">
+              </label>
             </div>
           </div>
 
           <div class="form-section" id="receiptAmountSection">
             <h3>Detail pembayaran</h3>
             <div class="field-grid">
-              <label>Nominal kwitansi (Rp)<input id="receiptAmount" type="number" min="0" placeholder="0"></label>
-              <label>Metode pembayaran<select id="paymentMethod"><option>Transfer Bank</option><option>Tunai</option><option>QRIS</option><option>E-Wallet</option><option>Lainnya</option></select></label>
+              <label>Nominal kwitansi (Rp)
+                <input id="receiptAmount" type="text" inputmode="numeric" placeholder="0">
+              </label>
+
+              <label>Metode pembayaran
+                <select id="paymentMethod">
+                  <option>Transfer Bank</option>
+                  <option>Tunai</option>
+                  <option>QRIS</option>
+                  <option>E-Wallet</option>
+                  <option>Lainnya</option>
+                </select>
+              </label>
             </div>
           </div>
 
           <div class="form-section">
             <h3>Catatan</h3>
-            <label>Catatan tambahan<textarea id="notes" rows="3" placeholder="Catatan atau syarat pembayaran (opsional)"></textarea></label>
+            <label>Catatan tambahan
+              <textarea id="notes" rows="3" placeholder="Catatan atau syarat pembayaran (opsional)"></textarea>
+            </label>
           </div>
 
           <div class="form-actions">
             <button class="btn btn-primary" type="button" id="saveLocal">Simpan draft</button>
             <button class="btn btn-outline" type="button" id="resetForm">Reset formulir</button>
           </div>
+
           <p class="privacy-note">Draft disimpan di browser perangkat ini. Untuk kwitansi, tombol Google Sheets mengirim ringkasan data ke spreadsheet yang kamu hubungkan.</p>
         </form>
       </section>
 
       <aside class="preview-panel">
-        <div class="preview-toolbar"><div><p class="eyebrow">LIVE PREVIEW</p><h2>Pratinjau dokumen</h2></div><button class="btn btn-small btn-primary" id="printPreview" type="button">Cetak / PDF</button></div>
+        <div class="preview-toolbar">
+          <div>
+            <p class="eyebrow">LIVE PREVIEW</p>
+            <h2>Pratinjau dokumen</h2>
+          </div>
+          <button class="btn btn-small btn-primary" id="printPreview" type="button">Cetak / PDF</button>
+        </div>
+
         <article class="paper" id="paper">
           <div class="paper-topline"></div>
+
           <div class="paper-head">
-            <div><div class="paper-logo">V</div><h2 id="pBusinessName">Nama Usaha</h2><p id="pBusinessAddress">Alamat usaha</p><p id="pBusinessPhone"></p></div>
-            <div class="doc-label"><p id="pDocLabel">INVOICE</p><strong id="pDocNumber">INV-001</strong><small id="pDocStatus">Belum Dibayar</small></div>
+            <div>
+              <div class="paper-logo">V</div>
+              <h2 id="pBusinessName">Nama Usaha</h2>
+              <p id="pBusinessAddress">Alamat usaha</p>
+              <p id="pBusinessPhone"></p>
+            </div>
+
+            <div class="doc-label">
+              <p id="pDocLabel">INVOICE</p>
+              <strong id="pDocNumber">INV-001</strong>
+              <small id="pDocStatus">Belum Dibayar</small>
+            </div>
           </div>
+
           <div class="paper-rule"></div>
+
           <div class="paper-meta">
-            <div><span id="pCustomerLabel">TAGIHAN KEPADA</span><strong id="pCustomerName">Nama pelanggan</strong><small id="pCustomerAddress"></small></div>
-            <div><span>TANGGAL</span><strong id="pDocDate">-</strong><small id="pDueDate">Jatuh tempo: -</small></div>
+            <div>
+              <span id="pCustomerLabel">TAGIHAN KEPADA</span>
+              <strong id="pCustomerName">Nama pelanggan</strong>
+              <small id="pCustomerAddress"></small>
+            </div>
+
+            <div>
+              <span>TANGGAL</span>
+              <strong id="pDocDate">-</strong>
+              <small id="pDueDate">Jatuh tempo: -</small>
+            </div>
           </div>
+
           <div id="pItemsWrap">
-            <table class="preview-table"><thead><tr><th>Deskripsi</th><th>Qty</th><th>Harga</th><th>Total</th></tr></thead><tbody id="pItems"></tbody></table>
+            <table class="preview-table">
+              <thead>
+                <tr>
+                  <th>Deskripsi</th>
+                  <th>Qty</th>
+                  <th>Harga</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="pItems"></tbody>
+            </table>
           </div>
+
           <div class="paper-totals" id="pTotals">
             <div><span>Subtotal</span><strong id="pSubtotal">Rp0</strong></div>
             <div><span>Diskon</span><strong id="pDiscount">Rp0</strong></div>
@@ -127,20 +216,45 @@
             <div><span>Dibayar</span><strong id="pPaid">Rp0</strong></div>
             <div><span>Sisa</span><strong id="pRemaining">Rp0</strong></div>
           </div>
+
           <div class="receipt-big-amount hidden" id="pReceiptAmount">Rp0</div>
-          <div class="receipt-detail hidden" id="pReceiptDetail"><span>DITERIMA DARI</span><strong id="pReceivedFrom"></strong><span>UNTUK PEMBAYARAN</span><p id="pReceiptFor"></p><span>METODE PEMBAYARAN</span><strong id="pPaymentMethod"></strong></div>
-          <div class="paper-notes"><strong>Catatan</strong><p id="pNotes">Terima kasih atas kepercayaan Anda.</p></div>
-          <div class="paper-footer"><span>Terima kasih atas kepercayaan Anda.</span><span id="pFooterBrand">VELORA DOCS</span></div>
+
+          <div class="receipt-detail hidden" id="pReceiptDetail">
+            <span>DITERIMA DARI</span>
+            <strong id="pReceivedFrom"></strong>
+            <span>UNTUK PEMBAYARAN</span>
+            <p id="pReceiptFor"></p>
+            <span>METODE PEMBAYARAN</span>
+            <strong id="pPaymentMethod"></strong>
+          </div>
+
+          <div class="paper-notes">
+            <strong>Catatan</strong>
+            <p id="pNotes">Terima kasih atas kepercayaan Anda.</p>
+          </div>
+
+          <div class="paper-footer">
+            <span>Terima kasih atas kepercayaan Anda.</span>
+            <span id="pFooterBrand">VELORA DOCS</span>
+          </div>
         </article>
+
         <div class="sheet-connect">
-          <div class="connect-icon">↗</div><div class="connect-copy"><strong>Simpan kwitansi ke Google Sheets</strong><p>Kirim ringkasan kwitansi ke spreadsheet yang sudah kamu siapkan.</p></div>
+          <div class="connect-icon">↗</div>
+          <div class="connect-copy">
+            <strong>Simpan kwitansi ke Google Sheets</strong>
+            <p>Kirim ringkasan kwitansi ke spreadsheet yang sudah kamu siapkan.</p>
+          </div>
           <button class="btn btn-outline" id="saveSheets" type="button">Simpan ke Sheets</button>
         </div>
+
         <p class="sheet-note" id="sheetMessage" role="status">Pastikan URL Apps Script dan token di script.js sudah diatur.</p>
       </aside>
     </div>
+
     <footer class="site-footer">VELORA DOCS <span>•</span> Dibuat untuk memudahkan administrasi usaha.</footer>
   </main>
+
   <script src="script.js"></script>
 </body>
 </html>
