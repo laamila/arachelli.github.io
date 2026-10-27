@@ -3,10 +3,7 @@
  // VELORA DOCS — GENERATOR INVOICE & KWITANSI
  // ================================================
 
- // URL Google Apps Script Web App
  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhV3umA1dzQW9Pi2p5NeB5SsVHP6E_J_kypeZQUHT9Jc-_nemo7Zn-maBIzTWyujSY/exec";
-
- // Token yang sama dengan token di Google Apps Script
  const SHEETS_TOKEN = "020101";
 
  const $ = (id) => document.getElementById(id);
@@ -18,7 +15,7 @@
    "businessName", "businessPhone", "businessAddress",
    "customerName", "customerAddress", "receivedFrom",
    "receiptFor", "discountPercent", "discountAmount",
-   "taxPercent", "paidAmount", "receiptAmount",
+   "taxPercent", "taxAmount", "paidAmount", "receiptAmount",
    "paymentMethod", "notes"
  ];
 
@@ -39,12 +36,44 @@
    }).format(Number(value) || 0);
  }
 
+ // Mengubah angka berformat 2.500.000 menjadi 2500000
+ function parseAmount(value) {
+   const digits = String(value ?? "").replace(/\D/g, "");
+   return Number(digits) || 0;
+ }
+
+ // Membaca nominal uang atau persentase
  function num(id) {
-   return Math.max(0, Number($(id).value) || 0);
+   const el = $(id);
+   if (!el) return 0;
+
+   if ([
+     "discountAmount", "taxAmount", "paidAmount",
+     "receiptAmount"
+   ].includes(id)) {
+     return parseAmount(el.value);
+   }
+
+   return Math.max(0, Number(el.value) || 0);
+ }
+
+ // Format titik ribuan Indonesia
+ function formatNumber(value) {
+   return new Intl.NumberFormat("id-ID", {
+     maximumFractionDigits: 0
+   }).format(Number(value) || 0);
+ }
+
+ function formatMoneyInput(input) {
+   if (!input) return;
+
+   const value = parseAmount(input.value);
+   input.value = value ? formatNumber(value) : "0";
  }
 
  function dateText(value) {
    if (!value) return "-";
+
    return new Date(value + "T00:00:00").toLocaleDateString("id-ID", {
      day: "2-digit",
      month: "long",
@@ -84,27 +113,46 @@
    row.className = "item-row";
 
    row.innerHTML = `
-     <input class="item-name" aria-label="Nama item" placeholder="Nama barang/jasa">
-     <input class="item-qty" aria-label="Kuantitas" type="number" min="1" value="1">
-     <input class="item-price" aria-label="Harga satuan" type="number" min="0" value="0">
+     <input class="item-name"
+       aria-label="Nama item"
+       placeholder="Nama barang/jasa">
+
+     <input class="item-qty"
+       aria-label="Kuantitas"
+       type="number" min="1" value="1">
+
+     <input class="item-price"
+       aria-label="Harga satuan"
+       type="text" inputmode="numeric" value="0">
+
      <span class="item-total">Rp0</span>
-     <button class="remove-item" type="button" aria-label="Hapus item">×</button>
+
+     <button class="remove-item"
+       type="button" aria-label="Hapus item">×</button>
    `;
 
    row.querySelector(".item-name").value = name;
    row.querySelector(".item-qty").value = qty;
-   row.querySelector(".item-price").value = price;
+   row.querySelector(".item-price").value =
+     formatNumber(price);
 
-   // Perubahan pada nama, jumlah, atau harga item
    row.querySelectorAll("input").forEach(input => {
      input.addEventListener("input", () => {
        autoCalculateDiscount();
        renderPreview();
        saveDraft(false);
      });
+
+     if (input.classList.contains("item-price")) {
+       input.addEventListener("blur", () => {
+         formatMoneyInput(input);
+         autoCalculateDiscount();
+         renderPreview();
+         saveDraft(false);
+       });
+     }
    });
 
-   // Hapus item
    row.querySelector(".remove-item").addEventListener("click", () => {
      row.remove();
 
@@ -117,7 +165,6 @@
      saveDraft(false);
    });
 
-   // Masukkan baris ke daftar item
    $("itemsList").appendChild(row);
 
    autoCalculateDiscount();
@@ -127,13 +174,16 @@
  function getItems() {
    return [...$("itemsList").querySelectorAll(".item-row")].map(row => ({
      name: safeText(row.querySelector(".item-name").value),
-     qty: Math.max(1, Number(row.querySelector(".item-qty").value) || 1),
-     price: Math.max(0, Number(row.querySelector(".item-price").value) || 0)
+     qty: Math.max(
+       1,
+       Number(row.querySelector(".item-qty").value) || 1
+     ),
+     price: parseAmount(row.querySelector(".item-price").value)
    }));
  }
 
  // ================================================
- // DISKON OTOMATIS
+ // PERHITUNGAN DISKON OTOMATIS
  // ================================================
 
  function autoCalculateDiscount() {
@@ -143,9 +193,12 @@
    );
 
    const percent = Math.min(100, num("discountPercent"));
-   const discountAmount = Math.round(subtotal * percent / 100);
+   const discountAmount = Math.min(
+     subtotal,
+     Math.round(subtotal * percent / 100)
+   );
 
-   $("discountAmount").value = discountAmount;
+   $("discountAmount").value = formatNumber(discountAmount);
  }
 
  // ================================================
@@ -158,18 +211,22 @@
      0
    );
 
-   // Nominal diskon sudah dihitung otomatis dari persentase.
-   // Jangan tambahkan persentase sekali lagi agar tidak dobel.
    const discount = Math.min(subtotal, num("discountAmount"));
-
    const taxable = Math.max(0, subtotal - discount);
-   const tax = taxable * num("taxPercent") / 100;
+
+   const taxPercent = Math.min(100, num("taxPercent"));
+   const tax = Math.round(taxable * taxPercent / 100);
+
    const total = Math.max(0, taxable + tax);
    const paid = Math.min(total, num("paidAmount"));
+
+   // Nominal pajak otomatis terisi dan berformat ribuan
+   $("taxAmount").value = formatNumber(tax);
 
    return {
      subtotal,
      discount,
+     taxable,
      tax,
      total,
      paid,
@@ -184,10 +241,16 @@
  function renderPreview() {
    const receipt = currentDoc === "receipt";
 
-   $("formTitle").textContent = receipt ? "Detail Kwitansi" : "Detail Invoice";
+   $("formTitle").textContent =
+     receipt ? "Detail Kwitansi" : "Detail Invoice";
+
    $("pDocLabel").textContent = receipt ? "KWITANSI" : "INVOICE";
-   $("pCustomerLabel").textContent = receipt ? "DITERIMA DARI" : "TAGIHAN KEPADA";
-   $("customerHeading").textContent = receipt ? "Informasi pembayaran" : "Informasi pelanggan";
+
+   $("pCustomerLabel").textContent =
+     receipt ? "DITERIMA DARI" : "TAGIHAN KEPADA";
+
+   $("customerHeading").textContent =
+     receipt ? "Informasi pembayaran" : "Informasi pelanggan";
 
    show("dueDateWrap", !receipt);
    show("customerNameWrap", !receipt);
@@ -212,7 +275,8 @@
      safeText($("businessPhone").value);
 
    $("pDocNumber").textContent =
-     safeText($("docNumber").value) || (receipt ? "KW-001" : "INV-001");
+     safeText($("docNumber").value) ||
+     (receipt ? "KW-001" : "INV-001");
 
    $("pDocStatus").textContent = $("paymentStatus").value;
    $("pDocDate").textContent = dateText($("docDate").value);
@@ -242,13 +306,11 @@
 
    const t = totals();
 
-   // Total masing-masing barang/jasa
    $("itemsList").querySelectorAll(".item-row").forEach((row, i) => {
      row.querySelector(".item-total").textContent =
        money((items[i]?.qty || 0) * (items[i]?.price || 0));
    });
 
-   // Total invoice
    $("pSubtotal").textContent = money(t.subtotal);
    $("pDiscount").textContent = "- " + money(t.discount);
    $("pTax").textContent = money(t.tax);
@@ -256,8 +318,8 @@
    $("pPaid").textContent = money(t.paid);
    $("pRemaining").textContent = money(t.remaining);
 
-   // Detail kwitansi
    $("pReceiptAmount").textContent = money(num("receiptAmount"));
+
    $("pReceivedFrom").textContent =
      safeText($("receivedFrom").value) || "—";
 
@@ -267,7 +329,8 @@
    $("pPaymentMethod").textContent = $("paymentMethod").value;
 
    $("pNotes").textContent =
-     safeText($("notes").value) || "Terima kasih atas kepercayaan Anda.";
+     safeText($("notes").value) ||
+     "Terima kasih atas kepercayaan Anda.";
 
    $("pFooterBrand").textContent =
      (safeText($("businessName").value) || "Velora Docs").toUpperCase();
@@ -281,7 +344,9 @@
    return {
      version: 1,
      docType: currentDoc,
-     fields: Object.fromEntries(fields.map(id => [id, $(id).value])),
+     fields: Object.fromEntries(
+       fields.map(id => [id, $(id).value])
+     ),
      items: getItems()
    };
  }
@@ -305,15 +370,17 @@
 
    $("itemsList").innerHTML = "";
 
-   const savedItems = Array.isArray(data.items) && data.items.length
-     ? data.items
-     : [{ name: "", qty: 1, price: 0 }];
+   const savedItems =
+     Array.isArray(data.items) && data.items.length
+       ? data.items
+       : [{ name: "", qty: 1, price: 0 }];
 
    savedItems.forEach(item => {
      addItem(item.name, item.qty, item.price);
    });
 
    autoCalculateDiscount();
+   formatAllMoneyInputs();
    renderPreview();
  }
 
@@ -325,7 +392,8 @@
        $("savedIndicator").textContent = "Draft tersimpan";
 
        setTimeout(() => {
-         $("savedIndicator").textContent = "Draft tersimpan otomatis";
+         $("savedIndicator").textContent =
+           "Draft tersimpan otomatis";
        }, 1800);
      }
    } catch (error) {
@@ -349,6 +417,46 @@
 
    return false;
  }
+
+ // ================================================
+ // FORMAT NOMINAL UANG
+ // ================================================
+
+ function formatAllMoneyInputs() {
+   [
+     "discountAmount",
+     "taxAmount",
+     "paidAmount",
+     "receiptAmount"
+   ].forEach(id => {
+     const input = $(id);
+     if (input) formatMoneyInput(input);
+   });
+
+   $("itemsList").querySelectorAll(".item-price").forEach(input => {
+     formatMoneyInput(input);
+   });
+ }
+
+ // Format setelah pengguna selesai mengisi nominal
+ $("docForm").addEventListener("focusout", event => {
+   const target = event.target;
+
+   if (
+     target.matches(".item-price") ||
+     [
+       "discountAmount",
+       "taxAmount",
+       "paidAmount",
+       "receiptAmount"
+     ].includes(target.id)
+   ) {
+     formatMoneyInput(target);
+     autoCalculateDiscount();
+     renderPreview();
+     saveDraft(false);
+   }
+ });
 
  // ================================================
  // GANTI JENIS DOKUMEN
@@ -436,13 +544,12 @@
    button.textContent = "Mengirim…";
 
    try {
-     // Mode no-cors tidak memungkinkan browser membaca respons.
-     // Periksa spreadsheet untuk memastikan data benar-benar masuk.
      await fetch(APPS_SCRIPT_URL, {
        method: "POST",
        mode: "no-cors",
        headers: {
-         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+         "Content-Type":
+           "application/x-www-form-urlencoded;charset=UTF-8"
        },
        body: new URLSearchParams(data).toString()
      });
@@ -452,7 +559,9 @@
        true
      );
    } catch (error) {
-     setMessage("Pengiriman gagal. Periksa koneksi internet dan URL Apps Script.");
+     setMessage(
+       "Pengiriman gagal. Periksa koneksi internet dan URL Apps Script."
+     );
    } finally {
      button.disabled = false;
      button.textContent = "Simpan ke Sheets";
@@ -481,6 +590,7 @@
    addItem();
 
    autoCalculateDiscount();
+   formatAllMoneyInputs();
    renderPreview();
    saveDraft(false);
  }
@@ -493,7 +603,6 @@
    tab.addEventListener("click", () => switchDoc(tab.dataset.doc));
  });
 
- // Tambah barang/jasa
  $("addItem").addEventListener("click", () => {
    addItem();
    autoCalculateDiscount();
@@ -501,7 +610,6 @@
    saveDraft(false);
  });
 
- // Perubahan formulir, termasuk diskon dan pajak
  $("docForm").addEventListener("input", event => {
    if (
      event.target.id === "discountPercent" ||
@@ -535,16 +643,17 @@
    document.body.classList.add("dark-mode");
  }
 
- // Inisialisasi pertama kali
-if (!loadDraft()) {
-  $("docDate").value = todayISO();
-  $("dueDate").value = todayISO();
-  $("docNumber").value = "INV-" + String(Date.now()).slice(-6);
-}
+ // Inisialisasi
+ if (!loadDraft()) {
+   $("docDate").value = todayISO();
+   $("dueDate").value = todayISO();
+   $("docNumber").value = "INV-" + String(Date.now()).slice(-6);
+ }
 
-if (!$("itemsList").querySelector(".item-row")) {
-  addItem();
-}
+ if (!$("itemsList").querySelector(".item-row")) {
+   addItem();
+ }
 
-autoCalculateDiscount();
-renderPreview();
+ autoCalculateDiscount();
+ formatAllMoneyInputs();
+ renderPreview();
